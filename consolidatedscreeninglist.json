@@ -62,7 +62,6 @@
                 "fuzzy_name": {
                     "description": "Enables users to query a name and get usable results without knowing the exact spelling of an entry",
                     "data_type": "boolean",
-                    "default": false,
                     "order": 3
                 }
             },

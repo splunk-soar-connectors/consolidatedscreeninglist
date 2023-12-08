@@ -160,22 +160,22 @@ class ConsolidatedScreeningListConnector(BaseConnector):
             if e.args:
                 if len(e.args) > 1:
                     err_code = e.args[0]
-                    error_msg = e.args[1]
+                    err_msg = e.args[1]
                 elif len(e.args) == 1:
                     err_code = ERR_CODE_MSG
-                    error_msg = e.args[0]
+                    err_msg = e.args[0]
             else:
                 err_code = ERR_CODE_MSG
-                error_msg = ERR_MSG_UNAVAILABLE
+                err_msg = ERR_MSG_UNAVAILABLE
         except Exception:
             err_code = ERR_CODE_MSG
-            error_msg = ERR_MSG_UNAVAILABLE
+            err_msg = ERR_MSG_UNAVAILABLE
 
         try:
             if err_code in ERR_CODE_MSG:
-                error_text = "Error Message: {0}".format(error_msg)
+                error_text = "Error Message: {0}".format(err_msg)
             else:
-                error_text = "Error Code: {0}. Error Message: {1}".format(err_code, error_msg)
+                error_text = "Error Code: {0}. Error Message: {1}".format(err_code, err_msg)
         except Exception:
             self.debug_print(PARSE_ERR_MSG)
             error_text = PARSE_ERR_MSG
@@ -340,6 +340,7 @@ def main():
 
     username = args.username
     password = args.password
+    verify = args.verify
 
     if username is not None and password is None:
 
@@ -348,9 +349,9 @@ def main():
 
     if username and password:
         try:
-            login_url = BaseConnector._get_phantom_base_url() + '/login'
+            login_url = ConsolidatedScreeningListConnector._get_phantom_base_url() + '/login'
 
-            r = requests.get(login_url, verify=False)
+            r = requests.get(login_url, verify=verify)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -362,7 +363,7 @@ def main():
             headers['Cookie'] = 'csrftoken=' + csrftoken
             headers['Referer'] = login_url
 
-            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
+            r2 = requests.post(login_url, verify=verify, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platform. Error: " + str(e))
