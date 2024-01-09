@@ -16,6 +16,7 @@
     "package_name": "phantom_consolidatedscreeninglist",
     "main_module": "consolidatedscreeninglist_connector.py",
     "min_phantom_version": "6.1.1",
+    "fips_compliant": false,
     "app_wizard_version": "1.0.0",
     "configuration": {
         "auth_token": {
