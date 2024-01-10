@@ -350,7 +350,7 @@ def main():
 
     if username and password:
         try:
-            login_url = ConsolidatedScreeningListConnector._get_phantom_base_url() + '/login'
+            login_url = BaseConnector._get_phantom_base_url() + '/login'
 
             r = requests.get(login_url, verify=verify)
             csrftoken = r.cookies['csrftoken']
