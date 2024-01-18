@@ -10,12 +10,13 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "Splunk Community",
-    "license": "Copyright (c) 2020 Splunk Inc.",
-    "app_version": "1.0.2",
+    "license": "Copyright (c) 2020-2024 Splunk Inc.",
+    "app_version": "1.0.3",
     "utctime_updated": "2022-01-07T20:41:28.000000Z",
     "package_name": "phantom_consolidatedscreeninglist",
     "main_module": "consolidatedscreeninglist_connector.py",
-    "min_phantom_version": "4.9.39220",
+    "min_phantom_version": "6.1.1",
+    "fips_compliant": false,
     "app_wizard_version": "1.0.0",
     "configuration": {
         "auth_token": {
@@ -62,7 +63,6 @@
                 "fuzzy_name": {
                     "description": "Enables users to query a name and get usable results without knowing the exact spelling of an entry",
                     "data_type": "boolean",
-                    "default": false,
                     "order": 3
                 }
             },
@@ -318,31 +318,23 @@
         "wheel": [
             {
                 "module": "beautifulsoup4",
-                "input_file": "wheels/beautifulsoup4-4.9.1-py3-none-any.whl"
-            },
-            {
-                "module": "certifi",
-                "input_file": "wheels/certifi-2021.10.8-py2.py3-none-any.whl"
-            },
-            {
-                "module": "chardet",
-                "input_file": "wheels/chardet-3.0.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "idna",
-                "input_file": "wheels/idna-2.10-py2.py3-none-any.whl"
-            },
-            {
-                "module": "requests",
-                "input_file": "wheels/requests-2.25.0-py2.py3-none-any.whl"
+                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
             },
             {
                 "module": "soupsieve",
-                "input_file": "wheels/soupsieve-2.3-py3-none-any.whl"
+                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
+            }
+        ]
+    },
+    "pip39_dependencies": {
+        "wheel": [
+            {
+                "module": "beautifulsoup4",
+                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
             },
             {
-                "module": "urllib3",
-                "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
+                "module": "soupsieve",
+                "input_file": "wheels/py3/soupsieve-2.5-py3-none-any.whl"
             }
         ]
     }
