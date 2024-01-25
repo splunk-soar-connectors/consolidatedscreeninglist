@@ -1,19 +1,28 @@
 # File: consolidatedscreeninglist_connector.py
-# Copyright (c) 2020 Splunk Inc.
 #
-# Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)
+# Copyright (c) 2020-2024 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
 
-
-from __future__ import print_function, unicode_literals
+import json
+import sys
 
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
+import requests
+from bs4 import BeautifulSoup
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 from consolidatedscreeninglist_consts import *
-import requests
-import json
-from bs4 import BeautifulSoup
 
 
 class RetVal(tuple):
@@ -56,7 +65,7 @@ class ConsolidatedScreeningListConnector(BaseConnector):
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
-        except:
+        except Exception:
             error_text = "Cannot parse error details"
 
         message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
@@ -68,10 +77,10 @@ class ConsolidatedScreeningListConnector(BaseConnector):
         try:
             resp_json = r.json()
         except Exception as e:
-            err_msg = self._get_error_message_from_exception(e)
+            err_message = self._get_error_message_from_exception(e)
             return RetVal(
                 action_result.set_status(
-                    phantom.APP_ERROR, "Unable to parse JSON response. {0}".format(err_msg)
+                    phantom.APP_ERROR, "Unable to parse JSON response. {0}".format(err_message)
                 ), None
             )
 
@@ -132,10 +141,10 @@ class ConsolidatedScreeningListConnector(BaseConnector):
                 **kwargs
             )
         except Exception as e:
-            err_msg = self._get_error_message_from_exception(e)
+            err_message = self._get_error_message_from_exception(e)
             return RetVal(
                 action_result.set_status(
-                    phantom.APP_ERROR, "Error Connecting to server. {0}".format(err_msg)
+                    phantom.APP_ERROR, "Error Connecting to server. {0}".format(err_message)
                 ), resp_json
             )
 
@@ -150,24 +159,24 @@ class ConsolidatedScreeningListConnector(BaseConnector):
         try:
             if e.args:
                 if len(e.args) > 1:
-                    error_code = e.args[0]
-                    error_msg = e.args[1]
+                    err_code = e.args[0]
+                    err_msg = e.args[1]
                 elif len(e.args) == 1:
-                    error_code = ERR_CODE_MSG
-                    error_msg = e.args[0]
+                    err_code = ERR_CODE_MSG
+                    err_msg = e.args[0]
             else:
-                error_code = ERR_CODE_MSG
-                error_msg = ERR_MSG_UNAVAILABLE
-        except:
-            error_code = ERR_CODE_MSG
-            error_msg = ERR_MSG_UNAVAILABLE
+                err_code = ERR_CODE_MSG
+                err_msg = ERR_MSG_UNAVAILABLE
+        except Exception:
+            err_code = ERR_CODE_MSG
+            err_msg = ERR_MSG_UNAVAILABLE
 
         try:
-            if error_code in ERR_CODE_MSG:
-                error_text = "Error Message: {0}".format(error_msg)
+            if err_code in ERR_CODE_MSG:
+                error_text = "Error Message: {0}".format(err_msg)
             else:
-                error_text = "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
-        except:
+                error_text = "Error Code: {0}. Error Message: {1}".format(err_code, err_msg)
+        except Exception:
             self.debug_print(PARSE_ERR_MSG)
             error_text = PARSE_ERR_MSG
 
@@ -176,7 +185,8 @@ class ConsolidatedScreeningListConnector(BaseConnector):
     def _handle_test_connectivity(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        self.save_progress("Testing the reachability of {}. This action doesn't perform any validation for the asset configuration parameter".format(BASE_URL))
+        self.save_progress("Testing the reachability of {}. This action doesn't perform any validation for \
+                           the asset configuration parameter".format(BASE_URL))
         self.save_progress("Connecting to endpoint")
         ret_val, _ = self._make_rest_call('', action_result, params=None, headers=None)
 
@@ -194,7 +204,7 @@ class ConsolidatedScreeningListConnector(BaseConnector):
                     return action_result.set_status(phantom.APP_ERROR, INVALID_INTEGER_ERR_MSG.format(key)), None
 
                 parameter = int(parameter)
-            except:
+            except Exception:
                 return action_result.set_status(phantom.APP_ERROR, INVALID_INTEGER_ERR_MSG.format(key)), None
 
             if parameter <= 0:
@@ -279,7 +289,7 @@ class ConsolidatedScreeningListConnector(BaseConnector):
                 summary['match'] = True
 
             summary['total_fetched_results'] = len(response["results"])
-        except:
+        except Exception:
             return action_result.set_status(phantom.APP_ERROR, "Error occurred while processing response from the server")
 
         return action_result.set_status(phantom.APP_SUCCESS)
@@ -313,8 +323,9 @@ class ConsolidatedScreeningListConnector(BaseConnector):
 
 
 def main():
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
@@ -323,12 +334,14 @@ def main():
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
 
     username = args.username
     password = args.password
+    verify = args.verify
 
     if username is not None and password is None:
 
@@ -339,7 +352,7 @@ def main():
         try:
             login_url = BaseConnector._get_phantom_base_url() + '/login'
 
-            r = requests.get(login_url, verify=False)
+            r = requests.get(login_url, verify=verify)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -351,11 +364,11 @@ def main():
             headers['Cookie'] = 'csrftoken=' + csrftoken
             headers['Referer'] = login_url
 
-            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
+            r2 = requests.post(login_url, verify=verify, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platform. Error: " + str(e))
-            exit(1)
+            sys.exit(1)
 
     with open(args.input_test_json) as f:
         in_json = f.read()
@@ -371,7 +384,7 @@ def main():
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)
 
 
 if __name__ == '__main__':
