@@ -2,7 +2,7 @@
 # Consolidated Screening List
 
 Publisher: Splunk Community  
-Connector Version: 1.1.0  
+Connector Version: 2.0.0  
 Product Vendor: Splunk  
 Product Name: Consolidated Screening List  
 Product Version Supported (regex): ".\*"  
