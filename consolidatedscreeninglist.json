@@ -11,7 +11,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk Community",
     "license": "Copyright (c) 2020-2024 Splunk Inc.",
-    "app_version": "1.1.0",
+    "app_version": "2.0.0",
     "utctime_updated": "2022-01-07T20:41:28.000000Z",
     "package_name": "phantom_consolidatedscreeninglist",
     "main_module": "consolidatedscreeninglist_connector.py",
