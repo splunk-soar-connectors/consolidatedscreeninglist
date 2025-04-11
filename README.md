@@ -1,7 +1,7 @@
 # Consolidated Screening List
 
 Publisher: Splunk Community \
-Connector Version: 2.0.0 \
+Connector Version: 2.0.1 \
 Product Vendor: Splunk \
 Product Name: Consolidated Screening List \
 Minimum Product Version: 6.1.1
